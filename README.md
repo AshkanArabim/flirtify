@@ -6,3 +6,6 @@ A new Flutter project.
 - Create a Firebase project and link it to this Flutter app (read Flutter's docs).
 
 TODO: write rest of instructions.
+
+## Documentation
+All design documents can be found under `docs/`
