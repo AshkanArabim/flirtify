@@ -1,0 +1,26 @@
+Chat {
+  id: String
+  participants: [
+    Ref(User)
+  ]
+  messages: [
+    Ref(Message)
+  ]
+}
+
+User {
+  id: String
+  username: String
+  profilePicURL: String
+  password: String(hashed)
+  chats: [
+    Ref(Chat)
+  ]
+}
+
+Message {
+  id: String
+  timestamp: timestamp
+  sender: Ref(User)
+  body: String
+}
