@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import './ChatsRow.dart';
+import '../components/chats_row.dart';
 
-class Chats extends StatefulWidget {
-  const Chats({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<Chats> createState() => _ChatsState();
+  State<Home> createState() => _HomeState();
 }
 
-class _ChatsState extends State<Chats> {
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
