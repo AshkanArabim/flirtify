@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flirtify/pages/Home.dart';
+import 'package:flirtify/pages/Login.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -39,7 +40,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Home(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasData) {
+            return const Home();
+          } else {
+            return const Login();
+          }
+        },
+      ),
     );
   }
 }
