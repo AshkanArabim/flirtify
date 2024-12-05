@@ -4,4 +4,8 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- add cleartext for debugging so firebase emulators can work -->
+    <!-- src: https://github.com/firebase/flutterfire/discussions/7769 -->
+    <application android:usesCleartextTraffic="true"/>
 </manifest>
