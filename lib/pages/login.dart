@@ -36,6 +36,11 @@ class _LoginState extends State<Login> {
           _errorMessage = "Error: ${e.code}";
         });
       }
+    } catch (e) {
+      setState(() {
+        _loginFailed = true;
+        _errorMessage = "Error $e";
+      });
     }
   }
 
@@ -65,6 +70,7 @@ class _LoginState extends State<Login> {
             MyTextField(
               hint: "Password",
               controller: _pwController,
+              obscureText: true,
             ),
 
             // error if needed

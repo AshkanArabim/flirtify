@@ -81,6 +81,7 @@ class _SignupState extends State<Signup> {
             ),
             MyTextField(
               hint: "Password",
+              obscureText: true,
               controller: _pwController,
             ),
             SizedBox(
@@ -88,6 +89,7 @@ class _SignupState extends State<Signup> {
             ),
             MyTextField(
               hint: "Repeat Password",
+              obscureText: true,
               controller: _pwRepeatController,
             ),
 
