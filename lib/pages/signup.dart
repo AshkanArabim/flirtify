@@ -44,6 +44,11 @@ class _SignupState extends State<Signup> {
           _signupFailed = true;
           _errorMessage = 'Email is already in use!';
         });
+      } else {
+        setState(() {
+          _signupFailed = true;
+          _errorMessage = "Error: ${e.message}";
+        });
       }
     } catch (e) {
       _signupFailed = true;
@@ -85,6 +90,9 @@ class _SignupState extends State<Signup> {
               hint: "Repeat Password",
               controller: _pwRepeatController,
             ),
+
+            // show error if there is one
+            signUpErrorIfNeeded(context),
 
             // submit button
             SizedBox(
