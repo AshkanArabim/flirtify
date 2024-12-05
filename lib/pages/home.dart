@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       appBar: AppBar(
-        title: Text('Clearchat'),
+        title: Text('Flirtify'),
         backgroundColor: Colors.black12,
       ),
       body: ListView(
