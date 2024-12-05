@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flirtify/components/my_elevated_button.dart';
 import 'package:flirtify/components/my_text_field.dart';
 import 'package:flirtify/pages/signup.dart';
-// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -13,20 +12,20 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final emailController = TextEditingController();
-  final pwController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _pwController = TextEditingController();
 
-  bool loginFailed = false;
+  bool _loginFailed = false;
 
   void handleLogin() async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: pwController.text,
+        email: _emailController.text,
+        password: _pwController.text,
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        loginFailed = true;
+        _loginFailed = true;
       }
     }
   }
@@ -49,14 +48,14 @@ class _LoginState extends State<Login> {
             ),
             MyTextField(
               hint: "Email",
-              controller: emailController,
+              controller: _emailController,
             ),
             SizedBox(
               height: 15,
             ),
             MyTextField(
               hint: "Password",
-              controller: pwController,
+              controller: _pwController,
             ),
 
             // error if needed
@@ -98,7 +97,7 @@ class _LoginState extends State<Login> {
   }
 
   Widget signInErrorIfNeeded(BuildContext context) {
-    if (loginFailed) {
+    if (_loginFailed) {
       return const Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
