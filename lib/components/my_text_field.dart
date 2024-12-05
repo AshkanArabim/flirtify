@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 
 class MyTextField extends StatelessWidget {
   String hint;
+  TextEditingController? controller;
 
   MyTextField({
     super.key,
     this.hint = "",
+    this.controller,
   });
 
   @override
@@ -18,6 +20,7 @@ class MyTextField extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
         ),
       ),
+      controller: controller,
     );
   }
 }

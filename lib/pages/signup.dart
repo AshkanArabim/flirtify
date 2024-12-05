@@ -23,7 +23,7 @@ class Signup extends StatelessWidget {
               height: 15,
             ),
             MyTextField(
-              hint: "Username",
+              hint: "Email",
             ),
             SizedBox(
               height: 15,
