@@ -16,6 +16,7 @@ class _LoginState extends State<Login> {
   final _pwController = TextEditingController();
 
   bool _loginFailed = false;
+  String _errorMessage = "";
 
   void handleLogin() async {
     try {
@@ -25,7 +26,15 @@ class _LoginState extends State<Login> {
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        _loginFailed = true;
+        setState(() {
+          _loginFailed = true;
+          _errorMessage = "Username or password incorrect!";
+        });
+      } else {
+        setState(() {
+          _loginFailed = true;
+          _errorMessage = "Error: ${e.code}";
+        });
       }
     }
   }
@@ -98,14 +107,14 @@ class _LoginState extends State<Login> {
 
   Widget signInErrorIfNeeded(BuildContext context) {
     if (_loginFailed) {
-      return const Column(
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
             height: 15,
           ),
           Text(
-            "Username or password incorrect!",
+            _errorMessage,
             style: const TextStyle(color: Colors.red),
           ),
         ],
