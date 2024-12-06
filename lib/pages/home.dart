@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../components/chats_row.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,6 +17,10 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final firestore = FirebaseFirestore.instance;
+
+    final chatsStream = firestore.collection('chats').snapshots();
+
     return Scaffold(
       drawer: Drawer(
         child: Column(
@@ -35,12 +40,29 @@ class _HomeState extends State<Home> {
         title: Text('Flirtify'),
         backgroundColor: Colors.black12,
       ),
-      body: ListView(
-        children: [
-          ChatsRow(),
-          ChatsRow(),
-          ChatsRow(),
-        ],
+      body: StreamBuilder(
+        stream: chatsStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          } else if (snapshot.hasData) {
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                final chat = snapshot.data!.docs[index];
+                return ChatsRow(
+                  chat: chat.data(),
+                );
+              },
+              itemCount: snapshot.data!.docs.length,
+            );
+          } else {
+            return Text("Snapshot has no data...");
+          }
+        },
       ),
     );
   }
