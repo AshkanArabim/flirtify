@@ -52,9 +52,9 @@ class _HomeState extends State<Home> {
           } else if (snapshot.hasData) {
             return ListView.builder(
               itemBuilder: (context, index) {
-                final chat = snapshot.data!.docs[index];
+                final chatSnapshot = snapshot.data!.docs[index];
                 return ChatsRow(
-                  chat: chat.data(),
+                  chatSnapshot: chatSnapshot,
                 );
               },
               itemCount: snapshot.data!.docs.length,

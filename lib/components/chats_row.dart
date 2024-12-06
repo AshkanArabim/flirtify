@@ -1,15 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatsRow extends StatelessWidget {
-  Map<String, dynamic> chat;
+  QueryDocumentSnapshot<Map<String, dynamic>> chatSnapshot;
 
   ChatsRow({
     super.key,
-    required this.chat,
+    required this.chatSnapshot,
   });
 
   @override
   Widget build(BuildContext context) {
+    final chat = chatSnapshot.data();
+    final lastMessageStream = chatSnapshot.reference
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .snapshots();
+
     return InkWell(
       onTap: () {
         print('clicked');
@@ -38,7 +46,19 @@ class ChatsRow extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(chat['name'] ?? 'Untitled Chat'),
-                        Text('Last chat...'),
+                        StreamBuilder(
+                          stream: lastMessageStream,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Text(""); // empty
+                            } else if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                              return Text(snapshot.data!.docs.first["body"]);
+                            } else {
+                              return const Text("No messages...");
+                            }
+                          },
+                        )
                       ],
                     ),
                   ),
