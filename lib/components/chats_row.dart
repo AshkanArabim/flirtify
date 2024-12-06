@@ -54,7 +54,11 @@ class ChatsRow extends StatelessWidget {
                               return const Text(""); // empty
                             } else if (snapshot.hasData &&
                                 snapshot.data!.docs.isNotEmpty) {
-                              return Text(snapshot.data!.docs.first["body"]);
+                              return Text(
+                                snapshot.data!.docs.first["body"],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              );
                             } else {
                               return const Text("No messages...");
                             }
