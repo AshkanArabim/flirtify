@@ -52,7 +52,8 @@ class ChatsRow extends StatelessWidget {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return const Text(""); // empty
-                            } else if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                            } else if (snapshot.hasData &&
+                                snapshot.data!.docs.isNotEmpty) {
                               return Text(snapshot.data!.docs.first["body"]);
                             } else {
                               return const Text("No messages...");
@@ -68,7 +69,37 @@ class ChatsRow extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('17:35'),
+                      StreamBuilder(
+                        stream: lastMessageStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text(""); // empty
+                          } else if (snapshot.hasData &&
+                              snapshot.data!.docs.isNotEmpty) {
+                            final timestamp = snapshot
+                                .data!.docs.first["timestamp"] as Timestamp;
+                            final dateTime = timestamp.toDate();
+                            final now = DateTime.now();
+                            String timeString;
+
+                            if (dateTime.year != now.year) {
+                              timeString =
+                                  "${dateTime.year}/${dateTime.month}/${dateTime.day}";
+                            } else if (dateTime.month != now.month ||
+                                dateTime.day != now.day) {
+                              timeString = "${dateTime.month}/${dateTime.day}";
+                            } else {
+                              timeString =
+                                  "${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}";
+                            }
+
+                            return Text(timeString);
+                          } else {
+                            return const Text("");
+                          }
+                        },
+                      )
                     ],
                   )
                 ],
