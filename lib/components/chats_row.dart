@@ -36,7 +36,19 @@ class ChatsRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    child: Icon(Icons.person),
+                    child: Image.network(
+                      chat['grouppic'] ?? "",
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        }
+
+                        return const CircularProgressIndicator();
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.group);
+                      },
+                    ),
                   ),
                   SizedBox(
                     width: 10,
