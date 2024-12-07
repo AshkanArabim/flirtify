@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flirtify/pages/chat.dart';
 import 'package:flutter/material.dart';
 
 class ChatsRow extends StatelessWidget {
@@ -21,6 +22,12 @@ class ChatsRow extends StatelessWidget {
 
     return InkWell(
       onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => Chat(chatRef: chatSnapshot.reference),
+          ),
+        );
       },
       child: Column(
         children: [
