@@ -5,9 +5,9 @@ import 'package:flirtify/pages/chat.dart';
 import 'package:flutter/material.dart';
 
 class ChatsRow extends StatelessWidget {
-  QueryDocumentSnapshot<Map<String, dynamic>> chatSnapshot;
+  final QueryDocumentSnapshot<Map<String, dynamic>> chatSnapshot;
 
-  ChatsRow({
+  const ChatsRow({
     super.key,
     required this.chatSnapshot,
   });
@@ -51,67 +51,14 @@ class ChatsRow extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(chat['name'] ?? 'Untitled Chat'),
-                        StreamBuilder(
-                          stream: lastMessageStream,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Text(""); // empty
-                            } else if (snapshot.hasData &&
-                                snapshot.data!.docs.isNotEmpty) {
-                              return Text(
-                                snapshot.data!.docs.first["body"],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              );
-                            } else {
-                              return const Text("No messages...");
-                            }
-                          },
-                        )
+                        chatName(chat),
+                        lastMessageTextAndTime(lastMessageStream)
                       ],
                     ),
                   ),
                   SizedBox(
                     width: 10,
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      StreamBuilder(
-                        stream: lastMessageStream,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Text(""); // empty
-                          } else if (snapshot.hasData &&
-                              snapshot.data!.docs.isNotEmpty) {
-                            final timestamp = snapshot
-                                .data!.docs.first["timestamp"] as Timestamp;
-                            final dateTime = timestamp.toDate();
-                            final now = DateTime.now();
-                            String timeString;
-
-                            if (dateTime.year != now.year) {
-                              timeString =
-                                  "${dateTime.year}/${dateTime.month}/${dateTime.day}";
-                            } else if (dateTime.month != now.month ||
-                                dateTime.day != now.day) {
-                              timeString = "${dateTime.month}/${dateTime.day}";
-                            } else {
-                              timeString =
-                                  "${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}";
-                            }
-
-                            return Text(timeString);
-                          } else {
-                            return const Text("");
-                          }
-                        },
-                      )
-                    ],
-                  )
                 ],
               ),
             ),
@@ -119,5 +66,50 @@ class ChatsRow extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  StreamBuilder<QuerySnapshot<Map<String, dynamic>>> lastMessageTextAndTime(
+      Stream<QuerySnapshot<Map<String, dynamic>>> lastMessageStream) {
+    return StreamBuilder(
+      stream: lastMessageStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text(""); // empty
+        } else if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+          final timestamp = snapshot.data!.docs.first["timestamp"] as Timestamp;
+          final dateTime = timestamp.toDate();
+          final now = DateTime.now();
+          String timeString;
+
+          if (dateTime.year != now.year) {
+            timeString = "${dateTime.year}/${dateTime.month}/${dateTime.day}";
+          } else if (dateTime.month != now.month || dateTime.day != now.day) {
+            timeString = "${dateTime.month}/${dateTime.day}";
+          } else {
+            timeString =
+                "${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}";
+          }
+
+          final lastMessageText = Text(
+            snapshot.data!.docs.first["body"],
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          );
+
+          return Row(
+            children: [
+              Expanded(child: lastMessageText),
+              Text(timeString),
+            ],
+          );
+        } else {
+          return const Text(""); // empty
+        }
+      },
+    );
+  }
+
+  Text chatName(Map<String, dynamic> chat) {
+    return Text(chat['name'] ?? 'Untitled Group');
   }
 }
