@@ -4,14 +4,14 @@ import 'package:flirtify/components/my_text_field.dart';
 import 'package:flirtify/pages/signup.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _pwController = TextEditingController();
 
@@ -94,7 +94,7 @@ class _LoginState extends State<Login> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const Signup(),
+                    builder: (_) => const SignupPage(),
                   ),
                 );
               },

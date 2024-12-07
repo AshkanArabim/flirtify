@@ -25,7 +25,7 @@ class ChatsRow extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => Chat(chatRef: chatSnapshot.reference),
+            builder: (_) => ChatPage(chatRef: chatSnapshot.reference),
           ),
         );
       },

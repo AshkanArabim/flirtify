@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import '../components/chats_row.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeState extends State<Home> {
+class _HomePageState extends State<HomePage> {
   void handleLogout() async {
     FirebaseAuth.instance.signOut();
   }

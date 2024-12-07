@@ -3,9 +3,9 @@ import 'package:flirtify/components/my_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class Chat extends StatelessWidget {
+class ChatPage extends StatelessWidget {
   DocumentReference chatRef;
-  Chat({
+  ChatPage({
     super.key,
     required this.chatRef,
   });

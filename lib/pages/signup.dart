@@ -4,14 +4,14 @@ import 'package:flirtify/components/my_text_field.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class Signup extends StatefulWidget {
-  const Signup({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<Signup> createState() => _SignupState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _SignupState extends State<Signup> {
+class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _pwController = TextEditingController();
   final _pwRepeatController = TextEditingController();
