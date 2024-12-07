@@ -162,6 +162,9 @@ class ChatsRow extends StatelessWidget {
             return Icon(Icons.error);
           } else {
             return Image.network(
+              fit: BoxFit.cover,
+              width: 100,
+              height: 100,
               snapshot.data ?? "",
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) {
@@ -176,7 +179,9 @@ class ChatsRow extends StatelessWidget {
       );
     }
     return CircleAvatar(
-      child: avatarContent,
+      child: ClipOval(
+        child: avatarContent,
+      ),
     );
   }
 }
