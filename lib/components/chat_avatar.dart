@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flirtify/utils/ref_utils.dart';
 import 'package:flutter/material.dart';
 
 class ChatAvatar extends StatelessWidget {
+  // make sure the caller is already wrapped in a streambuilder!
   final Map<String, dynamic> chat;
   const ChatAvatar({
     super.key,
@@ -28,22 +30,8 @@ class ChatAvatar extends StatelessWidget {
       );
     } else {
       Future<String> dmProfileFuture() async {
-        // get both participants of the chat
-        final participants = (chat['participants'] as List<dynamic>).map(
-          (p) => (p as DocumentReference),
-        );
-
-        // get the current user
-        final currentUserSnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .where('email', isEqualTo: FirebaseAuth.instance.currentUser!.email)
-            .get();
-        final DocumentReference currentUserRef =
-            currentUserSnapshot.docs.first.reference;
-
         // exclude the current user from participants
-        final partnerRef = participants
-            .firstWhere((participant) => participant != currentUserRef);
+        final partnerRef = await getPartnerRef(chat);
 
         // return other participant's profile link
         final partnerSnapshot = await partnerRef.get();
