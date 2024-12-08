@@ -15,6 +15,14 @@ Future<DocumentReference> getPartnerRef(Map<String, dynamic> chat) async {
   );
 
   // get the current user
+  final DocumentReference currentUserRef = await getCurrentUserRef();
+
+  // exclude the current user from participants
+  return participants
+      .firstWhere((participant) => participant != currentUserRef);
+}
+
+Future<DocumentReference> getCurrentUserRef() async {
   final currentUserSnapshot = await FirebaseFirestore.instance
       .collection('users')
       .where('email', isEqualTo: FirebaseAuth.instance.currentUser!.email)
@@ -22,7 +30,5 @@ Future<DocumentReference> getPartnerRef(Map<String, dynamic> chat) async {
   final DocumentReference currentUserRef =
       currentUserSnapshot.docs.first.reference;
 
-  // exclude the current user from participants
-  return participants
-      .firstWhere((participant) => participant != currentUserRef);
+  return currentUserRef;
 }
