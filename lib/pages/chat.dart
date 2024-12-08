@@ -99,29 +99,42 @@ class ChatPage extends StatelessWidget {
             child: Text("Error: ${snapshot.error}"),
           );
         } else {
+          final isCurrentUser = (snapshot.data as DocumentReference) ==
+              message['sender'] as DocumentReference;
           return Row(
-            // container holding the message bubble
-            mainAxisAlignment: (snapshot.data as DocumentReference ==
-                    message['sender'] as DocumentReference)
-                ? (MainAxisAlignment.end)
-                : (MainAxisAlignment.start),
+            mainAxisAlignment:
+                isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
-              Row(
-                // colored message bubble
-                children: [
-                  Text(
-                    message['body'],
-                    softWrap: true,
-                  ),
-                  Text(
-                    messageTimeString,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Theme.of(context).textTheme.bodySmall?.color,
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.7),
+                decoration: BoxDecoration(
+                  color: isCurrentUser ? Theme.of(context).primaryColor : Theme.of(context).focusColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      message['body'],
+                      style: TextStyle(
+                        color: isCurrentUser ? Colors.white : Colors.black,
+                      ),
+                      softWrap: true,
                     ),
-                  ),
-                ],
-              )
+                    SizedBox(height: 5),
+                    Text(
+                      messageTimeString,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isCurrentUser ? Colors.white70 : Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           );
         }
