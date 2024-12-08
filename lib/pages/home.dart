@@ -38,7 +38,8 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         title: Text('Flirtify'),
-        backgroundColor: Colors.black12,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
       ),
       body: StreamBuilder(
         stream: chatsStream,

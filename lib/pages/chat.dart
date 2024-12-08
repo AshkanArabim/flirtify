@@ -17,6 +17,9 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
         title: StreamBuilder(
           stream: chatRef.snapshots(),
           builder: (context, snapshot) {
@@ -30,6 +33,7 @@ class ChatPage extends StatelessWidget {
                 as Map<String, dynamic>;
             return Row(children: [
               ChatAvatar(chat: chat),
+              SizedBox(width: 15),
               ChatName(chat: chat),
             ]);
           },
