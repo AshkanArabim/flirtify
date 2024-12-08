@@ -5,66 +5,77 @@ import 'package:flirtify/pages/chat.dart';
 import 'package:flutter/material.dart';
 
 class ChatsRow extends StatelessWidget {
-  final QueryDocumentSnapshot<Map<String, dynamic>> chatSnapshot;
+  final DocumentReference<Map<String, dynamic>> chatRef;
 
   const ChatsRow({
     super.key,
-    required this.chatSnapshot,
+    required this.chatRef,
   });
 
   @override
   Widget build(BuildContext context) {
-    final chat = chatSnapshot.data();
-    final lastMessageStream = chatSnapshot.reference
+    final lastMessageStream = chatRef
         .collection('messages')
         .orderBy('timestamp', descending: true)
         .limit(1)
         .snapshots();
 
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ChatPage(chatRef: chatSnapshot.reference),
-          ),
-        );
-      },
-      child: Column(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(width: 1.0, color: Colors.black12),
-              ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ChatAvatar(chat: chat),
-                  SizedBox(
-                    width: 10,
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: chatRef.snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasData && snapshot.data!.exists) {
+          final chat = snapshot.data!.data()!;
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ChatPage(chatRef: chatRef),
+                ),
+              );
+            },
+            child: Column(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      top: BorderSide(width: 1.0, color: Colors.black12),
+                    ),
                   ),
-                  Expanded(
-                    child: Column(
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        chatName(chat),
-                        lastMessageTextAndTime(lastMessageStream)
+                        ChatAvatar(chat: chat),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              chatName(chat),
+                              lastMessageTextAndTime(lastMessageStream)
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
+          );
+        } else {
+          return const Text("Chat not found");
+        }
+      },
     );
   }
 

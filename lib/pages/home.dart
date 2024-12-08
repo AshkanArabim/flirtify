@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 final chatSnapshot = snapshot.data!.docs[index];
                 return ChatsRow(
-                  chatSnapshot: chatSnapshot,
+                  chatRef: chatSnapshot.reference,
                 );
               },
               itemCount: snapshot.data!.docs.length,
