@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flirtify/components/chat_avatar.dart';
+import 'package:flirtify/components/chat_name.dart';
 import 'package:flirtify/pages/chat.dart';
 import 'package:flirtify/utils/ref_utils.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,7 @@ class ChatsRow extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              chatName(chat),
+                              ChatName(chat: chat),
                               lastMessageTextAndTime(lastMessageStream)
                             ],
                           ),
@@ -119,30 +120,5 @@ class ChatsRow extends StatelessWidget {
         }
       },
     );
-  }
-
-  Widget chatName(Map<String, dynamic> chat) {
-    Future<String> dmEmailFuture() async {
-      final partnerRef = await getPartnerRef(chat);
-      final partnerSnapshot = await partnerRef.get();
-      return partnerSnapshot['email'];
-    }
-
-    if (chat['participants']!.length > 2) {
-      return Text(chat['name'] ?? 'Untitled Group');
-    } else {
-      return FutureBuilder(
-        future: dmEmailFuture(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text("Loading...");
-          } else if (snapshot.hasData) {
-            return Text(snapshot.data!);
-          } else {
-            return const Text("Error loading email");
-          }
-        },
-      );
-    }
   }
 }
