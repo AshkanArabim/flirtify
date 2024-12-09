@@ -42,7 +42,7 @@ class ChatPage extends StatelessWidget {
       body: Column(
         children: [
           messagesContainer(),
-          newMessageBar(),
+          newMessageBar(context),
         ],
       ),
     );
@@ -127,7 +127,7 @@ class ChatPage extends StatelessWidget {
     );
   }
 
-  Row newMessageBar() {
+  Row newMessageBar(BuildContext context) {
     final messageController = TextEditingController();
     return Row(
       children: [
@@ -139,8 +139,16 @@ class ChatPage extends StatelessWidget {
         ),
         IconButton(
           icon: Icon(Icons.send),
-          onPressed: () {
-            // TODO: send message
+          onPressed: () async {
+            final messageMap = {
+              "body": messageController.text,
+              "sender": CurrentUserRefProvider.of(context).currentUserRef,
+              "timestamp": Timestamp.now(),
+            } as Map<String, dynamic>;
+
+            messageController.text = "";
+
+            await chatRef.collection('messages').add(messageMap);
           },
         ),
       ],
