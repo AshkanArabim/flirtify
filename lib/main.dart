@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flirtify/providers/current_user_ref_provider.dart';
+import 'package:flirtify/utils/ref_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -37,6 +39,24 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Future<DocumentReference> _getCurrentUserRef() async {
+    final currentUserAuth = FirebaseAuth.instance.currentUser;
+
+    assert(
+      currentUserAuth != null,
+      "Tried to call `getCurrentUserRef` when nobody is logged in.",
+    );
+
+    final currentUserSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: currentUserAuth!.email)
+        .get();
+    final DocumentReference currentUserRef =
+        currentUserSnapshot.docs.first.reference;
+
+    return currentUserRef;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,7 +66,21 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
           } else if (snapshot.hasData) {
-            return const HomePage();
+            return FutureBuilder(
+              future: _getCurrentUserRef(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text("Error ${snapshot.error}");
+                } else {
+                  return CurrentUserRefProvider(
+                    currentUserRef: snapshot.data as DocumentReference,
+                    child: const HomePage(),
+                  );
+                }
+              },
+            );
           } else {
             return LoginPage();
           }

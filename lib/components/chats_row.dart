@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flirtify/components/chat_avatar.dart';
 import 'package:flirtify/components/chat_name.dart';
 import 'package:flirtify/pages/chat.dart';
+import 'package:flirtify/providers/current_user_ref_provider.dart';
 import 'package:flirtify/utils/ref_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +35,13 @@ class ChatsRow extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => ChatPage(chatRef: chatRef),
+                  builder: (_) {
+                    return CurrentUserRefProvider(
+                      currentUserRef:
+                          CurrentUserRefProvider.of(context).currentUserRef,
+                      child: ChatPage(chatRef: chatRef),
+                    );
+                  },
                 ),
               );
             },

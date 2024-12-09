@@ -12,7 +12,7 @@ class ChatName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<String> dmEmailFuture() async {
-      final partnerRef = await getPartnerRef(chat);
+      final partnerRef = getPartnerRef(chat, context);
       final partnerSnapshot = await partnerRef.get();
       return partnerSnapshot['email'];
     }

@@ -2,14 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flirtify/components/chat_avatar.dart';
 import 'package:flirtify/components/chat_name.dart';
 import 'package:flirtify/components/my_text_field.dart';
-import 'package:flirtify/utils/ref_utils.dart';
+import 'package:flirtify/providers/current_user_ref_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class ChatPage extends StatelessWidget {
   // receiving chatRef because subcollections can only be accessed from DocumentReferences
-  DocumentReference chatRef;
-  ChatPage({
+  final DocumentReference chatRef;
+  const ChatPage({
     super.key,
     required this.chatRef,
   });
@@ -42,14 +41,14 @@ class ChatPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          messagesContainer(context),
+          messagesContainer(),
           newMessageBar(),
         ],
       ),
     );
   }
 
-  Expanded messagesContainer(BuildContext context) {
+  Expanded messagesContainer() {
     return Expanded(
       child: StreamBuilder(
         stream: chatRef.collection('messages').snapshots(),
@@ -84,61 +83,47 @@ class ChatPage extends StatelessWidget {
     final messsageDateTime = (message['timestamp'] as Timestamp).toDate();
     final messageTimeString =
         "${messsageDateTime.hour}:${messsageDateTime.minute.toString().padLeft(2, '0')}";
+    final currentUserRef = CurrentUserRefProvider.of(context).currentUserRef;
+    final messageSenderRef = message['sender'] as DocumentReference;
+    final isCurrentUser = currentUserRef == messageSenderRef;
 
-    final currentUserRefFuture = getCurrentUserRef();
-
-    return FutureBuilder(
-      future: currentUserRefFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text("Error: ${snapshot.error}"),
-          );
-        } else {
-          final isCurrentUser = (snapshot.data as DocumentReference) ==
-              message['sender'] as DocumentReference;
-          return Row(
-            mainAxisAlignment:
-                isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+    return Row(
+      mainAxisAlignment:
+          isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          constraints:
+              BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+          decoration: BoxDecoration(
+            color: isCurrentUser
+                ? Theme.of(context).primaryColor
+                : Theme.of(context).focusColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7),
-                decoration: BoxDecoration(
-                  color: isCurrentUser ? Theme.of(context).primaryColor : Theme.of(context).focusColor,
-                  borderRadius: BorderRadius.circular(20),
+              Text(
+                message['body'],
+                style: TextStyle(
+                  color: isCurrentUser ? Colors.white : Colors.black,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      message['body'],
-                      style: TextStyle(
-                        color: isCurrentUser ? Colors.white : Colors.black,
-                      ),
-                      softWrap: true,
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      messageTimeString,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: isCurrentUser ? Colors.white70 : Colors.black54,
-                      ),
-                    ),
-                  ],
+                softWrap: true,
+              ),
+              SizedBox(height: 5),
+              Text(
+                messageTimeString,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isCurrentUser ? Colors.white70 : Colors.black54,
                 ),
               ),
             ],
-          );
-        }
-      },
+          ),
+        ),
+      ],
     );
   }
 

@@ -31,7 +31,7 @@ class ChatAvatar extends StatelessWidget {
     } else {
       Future<String> dmProfileFuture() async {
         // exclude the current user from participants
-        final partnerRef = await getPartnerRef(chat);
+        final partnerRef = getPartnerRef(chat, context);
 
         // return other participant's profile link
         final partnerSnapshot = await partnerRef.get();
