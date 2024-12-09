@@ -7,7 +7,7 @@ DocumentReference getPartnerRef(
     Map<String, dynamic> chat, BuildContext context) {
   // assuming the chat only has two participants
   assert(
-    chat['participants']!.length > 2,
+    chat['participants']!.length <= 2,
     "Expected chat with 2 participants, got chat with ${chat['participants']!.length} participants",
   );
 
