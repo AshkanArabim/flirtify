@@ -24,3 +24,15 @@ DocumentReference getPartnerRef(
   return participants
       .firstWhere((participant) => participant != currentUserRef);
 }
+
+Future<DocumentReference?> getUserRefByEmail(String email) async {
+  final querySnapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .where('email', isEqualTo: email)
+      .get();
+  
+  if (querySnapshot.docs.isEmpty) {
+    return null;
+  }
+  return querySnapshot.docs.first.reference;
+}
