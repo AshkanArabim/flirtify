@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flirtify/components/contact_pill.dart';
 import 'package:flirtify/components/my_text_field.dart';
@@ -14,10 +16,13 @@ class NewChatPage extends StatefulWidget {
 }
 
 class _NewChatPageState extends State<NewChatPage> {
-  List<DocumentReference> _participants = [];
-  String _userAddingError = "";
-  String _chatCreationError = "";
+  final _participants = HashSet<DocumentReference>();
+  var _userAddingError = "";
+  var _chatCreationError = "";
+
   final _emailController = TextEditingController();
+  final _groupPicUrlController = TextEditingController();
+  final _groupNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -80,25 +85,22 @@ class _NewChatPageState extends State<NewChatPage> {
                     child: Wrap(
                       spacing: 5,
                       runSpacing: 5,
-                      children: _participants
-                          .map((userRef) => ContactPill(userRef: userRef))
-                          .toList(),
+                      children: _participants.map((userRef) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              _participants.remove(userRef);
+                            });
+                          },
+                          child: ContactPill(userRef: userRef),
+                        );
+                      }).toList(),
                     ),
                   )
                 : Container(),
 
             // show error if present
-            _userAddingError.isNotEmpty
-                ? Container(
-                    margin: EdgeInsets.only(top: 10),
-                    child: Text(
-                      _userAddingError,
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  )
-                : Container(),
+            errorMessage(_userAddingError),
 
             // only allow setting group pic and group name if at least 2 other
             // participants added to group. because otherwise it's just a DM.
@@ -108,26 +110,82 @@ class _NewChatPageState extends State<NewChatPage> {
                       SizedBox(height: 10),
                       MyTextField(
                         hint: "Group picture URL",
+                        controller: _groupPicUrlController,
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       MyTextField(
                         hint: "Group name",
+                        controller: _groupNameController,
                       ),
                     ],
                   ))
                 : Container(),
+
+            // render chat creation errors if needed
+            errorMessage(_chatCreationError),
+
+            // submit button
             SizedBox(
               height: 10,
             ),
             ElevatedButton(
               child: Text('Create'),
-              onPressed: () {},
+              onPressed: () async {
+                // don't create if no other participants added
+                if (_participants.isEmpty) {
+                  setState(() {
+                    _chatCreationError =
+                        "You must add at least one participant to create a chat!";
+                  });
+                  return;
+                }
+
+                // create the chat
+                final participantsList = _participants.toList();
+                participantsList
+                    .add(CurrentUserRefProvider.of(context).currentUserRef);
+                var chatMap = Map<String, dynamic>();
+                // var chatMap = {
+                //   "participants": participantsList,
+                // } as Map<String, dynamic>;
+                if (_groupNameController.text.isNotEmpty) {
+                  chatMap['name'] = _groupNameController.text;
+                }
+
+                chatMap['participants'] = participantsList;
+
+                if (_groupPicUrlController.text.isNotEmpty) {
+                  chatMap['grouppic'] = _groupPicUrlController.text;
+                }
+
+                await FirebaseFirestore.instance
+                    .collection('chats')
+                    .add(chatMap);
+
+                // pop the new chat page
+                Navigator.of(context).pop();
+              },
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget errorMessage(String message) {
+    if (message.isNotEmpty) {
+      return Container(
+        margin: EdgeInsets.only(top: 10),
+        child: Text(
+          message,
+          style: TextStyle(
+            color: Colors.red,
+          ),
+        ),
+      );
+    }
+    return Container();
   }
 }
