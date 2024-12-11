@@ -90,26 +90,34 @@ class _NewChatPageState extends State<NewChatPage> {
             // show error if present
             _userAddingError.isNotEmpty
                 ? Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Text(
-                    _userAddingError,
-                    style: TextStyle(
-                      color: Colors.red,
+                    margin: EdgeInsets.only(top: 10),
+                    child: Text(
+                      _userAddingError,
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
                     ),
-                  ),
-                )
+                  )
                 : Container(),
 
-            SizedBox(height: 10),
-            MyTextField(
-              hint: "Group picture URL",
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            MyTextField(
-              hint: "Group name",
-            ),
+            // only allow setting group pic and group name if at least 2 other
+            // participants added to group. because otherwise it's just a DM.
+            (_participants.length > 1)
+                ? (Column(
+                    children: [
+                      SizedBox(height: 10),
+                      MyTextField(
+                        hint: "Group picture URL",
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      MyTextField(
+                        hint: "Group name",
+                      ),
+                    ],
+                  ))
+                : Container(),
             SizedBox(
               height: 10,
             ),
