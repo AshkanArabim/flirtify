@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flirtify/pages/newchat.dart';
+import 'package:flirtify/providers/current_user_ref_provider.dart';
 import 'package:flutter/material.dart';
 import '../components/chats_row.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,6 +66,23 @@ class _HomePageState extends State<HomePage> {
             return Text("Snapshot has no data...");
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) {
+                return CurrentUserRefProvider(
+                  currentUserRef:
+                      CurrentUserRefProvider.of(context).currentUserRef,
+                  child: NewChatPage(),
+                );
+              },
+            ),
+          );
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
