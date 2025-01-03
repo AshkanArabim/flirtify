@@ -52,7 +52,7 @@ class ChatPage extends StatelessWidget {
   Expanded messagesContainer() {
     return Expanded(
       child: StreamBuilder(
-        stream: chatRef.collection('messages').snapshots(),
+        stream: chatRef.collection('messages').orderBy('timestamp').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
