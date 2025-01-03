@@ -56,3 +56,6 @@ analytics/macos/Runner/GoogleService-Info.plist
 
 # drawio backups
 *.bkp
+
+# env file
+.env

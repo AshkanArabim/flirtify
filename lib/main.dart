@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:flirtify/pages/home.dart';
 import 'package:flirtify/pages/login.dart';
@@ -32,6 +33,10 @@ void main() async {
       print(e);
     }
   }
+
+  // load env vars
+  // see https://pub.dev/packages/flutter_dotenv
+  await dotenv.load(fileName: ".env");
 
   runApp(const MyApp());
 }
