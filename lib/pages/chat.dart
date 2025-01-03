@@ -3,6 +3,7 @@ import 'package:flirtify/components/chat_avatar.dart';
 import 'package:flirtify/components/chat_name.dart';
 import 'package:flirtify/components/my_text_field.dart';
 import 'package:flirtify/providers/current_user_ref_provider.dart';
+import 'package:flirtify/utils/flirtifier.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatelessWidget {
@@ -140,13 +141,19 @@ class ChatPage extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.send),
           onPressed: () async {
+            String message = messageController.text;
+            messageController.text = "";
+
+            // add flirting tone
+            var flirtifier = Flirtifier();
+            message = await flirtifier.addFlirt(message);
+
+            // send to db
             final messageMap = {
-              "body": messageController.text,
+              "body": message,
               "sender": CurrentUserRefProvider.of(context).currentUserRef,
               "timestamp": Timestamp.now(),
             } as Map<String, dynamic>;
-
-            messageController.text = "";
 
             await chatRef.collection('messages').add(messageMap);
           },
